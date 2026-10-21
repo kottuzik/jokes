@@ -32,20 +32,6 @@ describe('Main screen', () => {
     expect(input).toHaveValue('')
   })
 
-  it('has an enabled create button that does not change the screen yet', async () => {
-    const user = userEvent.setup()
-    render(<App />)
-    const input = screen.getByRole('textbox', { name: 'בחר נושא לבדיחה' })
-    const button = screen.getByRole('button', { name: 'צור בדיחה' })
-    expect(button).toBeEnabled()
-
-    await user.type(input, 'חיות')
-    await user.click(button)
-
-    expect(input).toHaveValue('חיות')
-    expect(screen.queryAllByRole('listitem')).toHaveLength(0)
-  })
-
   it('shows an empty jokes list under its heading', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 2, name: 'רשימת בדיחות' })).toBeInTheDocument()

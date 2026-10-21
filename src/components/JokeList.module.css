@@ -15,6 +15,21 @@
   gap: 12px;
 }
 
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+}
+
+.text {
+  font-size: 16px;
+  line-height: 26px;
+  text-align: start;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
 @media (max-width: 380px) {
   .title {
     font-size: 18px;

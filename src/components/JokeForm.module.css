@@ -66,8 +66,14 @@
   transition: background-color 0.15s ease;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background: var(--color-primary-dark);
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .icon {

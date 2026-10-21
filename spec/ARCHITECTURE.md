@@ -243,3 +243,13 @@ OpenAI Responses API — model: gpt-5
 **הקשר:** צבע ה-Border שב-Style Guide (`#E5E7EB`) נותן ניגודיות של כ-1.2:1 על לבן, בעוד WCAG 2.2 AA (דרישת PRD) דורש 3:1 לגבולות של רכיבי קלט.
 **החלטה:** מסגרת שדה הנושא בצבע `#8C929C` (כ-3.1:1). שאר קווי ההפרדה הדקורטיביים יכולים להמשיך להשתמש בטוקן Border.
 **השלכות:** השדה מעט בולט יותר מה-Mockup, אך עומד בתקן הנגישות.
+
+### ADR-5: הרצת `/api/jokes` מקומית דרך Plugin של Vite, וקובץ `.env`
+**הקשר:** ב-Production, Vercel מריצה את `api/jokes.ts` אוטומטית, אבל `vite` לבד לא מריץ Functions. `vercel dev` דורש Vercel CLI, התחברות וקישור פרויקט — חלק מ-Milestone 5. בנוסף, §2.7–2.8 מזכירים `.env.local`, בעוד שנוהל העבודה בפרויקט קובע `.env`.
+**החלטה:** ה-Function כתובה כ-Handler בתקן Web (`export default { fetch(request) }`). Plugin קטן ב-`vite.config.ts`, שפועל רק ב-`npm run dev`, מעביר בקשות `/api/jokes` לאותו Handler, וטוען את `OPENAI_API_KEY` מ-`.env` (דרך `loadEnv`) לתהליך השרת בלבד, בלי קידומת `VITE_`. המפתח נשמר ב-`.env` (מוחרג ב-`.gitignore`, עם `.env.example` ללא ערכים); `loadEnv` קורא גם `.env.local`, כך שאין הבדל מעשי.
+**השלכות:** `npm run dev` מריץ את הממשק וה-API יחד בלי חשבון Vercel. הקוד שרץ מקומית הוא אותו קוד שירוץ ב-Vercel. שינוי ב-`.env` דורש הפעלה מחדש של שרת הפיתוח.
+
+### ADR-6: פלט מובנה ו-`reasoning.effort: minimal` בקריאה ל-`gpt-5`
+**הקשר:** נדרשת בדיחה קצרה, תשובה מהירה בתוך Timeout של 30 שניות, וקוד שפה כדי לסמן `lang` לטקסט הבדיחה.
+**החלטה:** הקריאה ל-Responses API משתמשת ב-JSON Schema קשיח (`joke`, `language`) וב-`reasoning: { effort: 'minimal' }`. ה-SDK מוגדר עם `maxRetries: 0` — ניסיון חוזר רק מכפתור "נסו שוב".
+**השלכות:** תשובות מהירות וזולות יותר, והשרת מקבל קוד שפה בלי ניחוש. קוד שפה לא תקין מושמט, והבדיחה מוצגת עם `dir="auto"` בלבד.

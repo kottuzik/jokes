@@ -1,12 +1,18 @@
-import { useState, type FormEvent } from 'react'
+import type { FormEvent } from 'react'
 import styles from './JokeForm.module.css'
 
-export default function JokeForm() {
-  const [topic, setTopic] = useState('')
+interface JokeFormProps {
+  topic: string
+  onTopicChange: (topic: string) => void
+  onSubmit: () => void
+  isLoading: boolean
+}
 
+export default function JokeForm({ topic, onTopicChange, onSubmit, isLoading }: JokeFormProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    // Joke generation is wired to the API in Milestone 2.
+    // Enter in the field also submits, so guard against double requests here too
+    if (!isLoading) onSubmit()
   }
 
   return (
@@ -23,9 +29,9 @@ export default function JokeForm() {
           autoComplete="off"
           placeholder="לדוגמה: חיות, עבודה, בית ספר..."
           value={topic}
-          onChange={(event) => setTopic(event.target.value)}
+          onChange={(event) => onTopicChange(event.target.value)}
         />
-        <button className={styles.button} type="submit">
+        <button className={styles.button} type="submit" disabled={isLoading}>
           <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M10 3l1.9 5.1L17 10l-5.1 1.9L10 17l-1.9-5.1L3 10l5.1-1.9z" />
             <path d="M18 3l.8 2.2L21 6l-2.2.8L18 9l-.8-2.2L15 6l2.2-.8z" />
