@@ -32,6 +32,20 @@ describe('Main screen', () => {
     expect(input).toHaveValue('')
   })
 
+  it('shows a clear button only when the topic has text, and clicking it empties the field', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    const input = screen.getByRole('textbox', { name: 'בחר נושא לבדיחה' })
+    expect(screen.queryByRole('button', { name: 'נקה נושא' })).not.toBeInTheDocument()
+
+    await user.type(input, 'חתולים')
+    await user.click(screen.getByRole('button', { name: 'נקה נושא' }))
+
+    expect(input).toHaveValue('')
+    expect(input).toHaveFocus()
+    expect(screen.queryByRole('button', { name: 'נקה נושא' })).not.toBeInTheDocument()
+  })
+
   it('shows an empty jokes list under its heading', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 2, name: 'רשימת בדיחות' })).toBeInTheDocument()

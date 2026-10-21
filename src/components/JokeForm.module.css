@@ -21,11 +21,17 @@
   gap: 12px;
 }
 
+.field {
+  position: relative;
+}
+
 .input {
   width: 100%;
   min-width: 0;
   height: 48px;
   padding-inline: 14px;
+  /* Room for the clear button on the left */
+  padding-left: 44px;
   background: var(--color-surface);
   /* Darker than the Border token so the field edge meets WCAG 3:1 non-text contrast */
   border: 1px solid #8c929c;
@@ -45,6 +51,38 @@
 
 .input:hover {
   border-color: var(--color-primary-light);
+}
+
+.clear {
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.clear:hover {
+  background: rgb(124 58 237 / 0.08);
+  color: var(--color-primary);
+}
+
+.clear svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
 }
 
 .button {

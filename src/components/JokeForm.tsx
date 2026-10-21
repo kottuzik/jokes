@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+import { useRef, type FormEvent } from 'react'
 import styles from './JokeForm.module.css'
 
 interface JokeFormProps {
@@ -10,6 +10,14 @@ interface JokeFormProps {
 }
 
 export default function JokeForm({ topic, onTopicChange, onSubmit, disabled }: JokeFormProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function handleClear() {
+    onTopicChange('')
+    // Keep the cursor in the field so the user can type a new topic right away
+    inputRef.current?.focus()
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     // Enter in the field also submits, so guard against double requests here too
@@ -22,16 +30,26 @@ export default function JokeForm({ topic, onTopicChange, onSubmit, disabled }: J
         <label htmlFor="topic">בחר נושא לבדיחה</label>
       </h2>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <input
-          id="topic"
-          className={styles.input}
-          type="text"
-          dir="auto"
-          autoComplete="off"
-          placeholder="לדוגמה: חיות, עבודה, בית ספר..."
-          value={topic}
-          onChange={(event) => onTopicChange(event.target.value)}
-        />
+        <div className={styles.field}>
+          <input
+            ref={inputRef}
+            id="topic"
+            className={styles.input}
+            type="text"
+            dir="auto"
+            autoComplete="off"
+            placeholder="לדוגמה: חיות, עבודה, בית ספר..."
+            value={topic}
+            onChange={(event) => onTopicChange(event.target.value)}
+          />
+          {topic !== '' && (
+            <button className={styles.clear} type="button" aria-label="נקה נושא" onClick={handleClear}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          )}
+        </div>
         <button className={styles.button} type="submit" disabled={disabled}>
           <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M10 3l1.9 5.1L17 10l-5.1 1.9L10 17l-1.9-5.1L3 10l5.1-1.9z" />
