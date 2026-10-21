@@ -1,0 +1,58 @@
+.wrap {
+  position: relative;
+  height: 128px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-block-end: -28px;
+}
+
+.face {
+  position: relative;
+  z-index: 1;
+  width: 112px;
+  height: 112px;
+}
+
+.sparks {
+  position: absolute;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  top: 4px;
+  inset-inline-start: calc(50% + 40px);
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.blobPurple {
+  width: 180px;
+  height: 120px;
+  bottom: -10px;
+  inset-inline-start: calc(50% + 60px);
+  background: var(--color-primary-light);
+  opacity: 0.55;
+}
+
+.blobLilac {
+  width: 140px;
+  height: 90px;
+  top: 0;
+  inset-inline-end: calc(50% + 70px);
+  background: #ddd6fe;
+}
+
+.blobYellow {
+  width: 170px;
+  height: 100px;
+  bottom: -20px;
+  inset-inline-end: calc(50% + 50px);
+  background: var(--color-accent-light);
+}
