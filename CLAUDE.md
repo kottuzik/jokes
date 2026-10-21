@@ -60,3 +60,5 @@
 - **הרצה (dev):** `npm run dev` (ואז לפתוח http://localhost:5173)
 - **הרצת גרסת Build עם PWA/Offline:** `npm run build && npm run preview` (ואז לפתוח http://localhost:4173)
 - **בדיקות (test):** `npm test` (וגם `npm run build` לבדיקת Build ו-TypeScript)
+- **בדיקות בדפדפן (E2E):** `npm run test:e2e` (מקומית, בלי עלות); מול האתר שבאוויר: `BASE_URL=<כתובת> npm run test:e2e`; עם בדיחות אמיתיות (עולה כסף): להוסיף `E2E_REAL=1`
+- **Production:** <כתובת Vercel — תעודכן אחרי הפריסה>

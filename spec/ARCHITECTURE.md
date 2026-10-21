@@ -269,3 +269,13 @@ OpenAI Responses API — model: gpt-5
 **החלטה:** ה-Plugin המקומי (`localApi` ב-`vite.config.ts`) מחבר את אותו Handler גם ל-`configurePreviewServer`; שם Node מריץ את `api/jokes.ts` ישירות (Type Stripping, Node 24). אייקוני ה-PWA (64/192/512, maskable, apple-touch-icon, favicon.ico) נוצרים בזמן Build מ-`public/favicon.svg` דרך `pwaAssets` (`@vite-pwa/assets-generator`, Preset `minimal-2023`) ולא נשמרים ב-Git. ה-Service Worker (`generateSW`, `autoUpdate`) עושה Precache לקובצי הממשק בלבד, בלי `runtimeCaching`, עם `navigateFallbackDenylist: [/^\/api\//]`. בזמן `npm run dev` ה-SW כבוי.
 **השלכות:** `npm run build && npm run preview` (http://localhost:4173) מריץ את האפליקציה המלאה כולל PWA ו-Offline, בלי חשבון Vercel. שינוי בציור ה-favicon משנה גם את אייקון האפליקציה המותקנת. גרסה חדשה נטענת אוטומטית בביקור הבא, בלי הודעה.
 
+
+### ADR-10: בדיקות End-to-End ב-Playwright (Chromium)
+**הקשר:** Milestone 5 דורש בדיקות End-to-End של כל פעולות ה-PRD, כולל Service Worker, Offline, התקנה וניגודיות צבעים — דברים ש-jsdom (ADR-2) לא יכול לבדוק. הבדיקות צריכות לרוץ גם מקומית וגם מול הכתובת שבאוויר.
+**החלטה:** `@playwright/test` עם Chromium בשני גדלים (מחשב 1280, אמולציית Pixel 7), בתיקיית `e2e/` ועם `tsconfig.e2e.json` משלה (כולל DOM). בלי `BASE_URL`, Playwright מריץ בעצמו `npm run build && npm run preview` על פורט 4175; עם `BASE_URL` הבדיקות רצות מול Deployment. רוב הבדיקות מדמות את `/api/jokes` (`page.route`, עם Service Worker חסום), בלי עלות. `e2e/real.spec.ts` פונה ל-`gpt-5` אמיתי ורץ רק עם `E2E_REAL=1`. נגישות נבדקת עם `axe-core` שמוזרק לדף (תגיות WCAG 2.0–2.2 A/AA). Vitest מוגבל ל-`src/` ול-`tests/`.
+**השלכות:** `npm run test:e2e` דורש Chromium של Playwright (`npx playwright install chromium`, פעם אחת). Safari/iOS וקוראי מסך אמיתיים נבדקים ידנית בלבד.
+
+### ADR-11: הוצאת בדיקות ה-API מ-`api/`, Node 24 וענף Preview
+**הקשר:** Vercel הופכת כל קובץ בתיקיית `api/` ל-Function ציבורית, כך ש-`api/jokes.test.ts` היה הופך ל-Endpoint. בנוסף, ה-Plugin המקומי (ADR-9) נשען על Node 24, ו-DoD של Milestone 5 דורש Preview לפני Production.
+**החלטה:** בדיקות ה-API עברו ל-`tests/api/jokes.test.ts`; ב-`api/` נמצא רק `jokes.ts`. `package.json` קובע `"engines": { "node": "24.x" }`, כך ש-Vercel משתמשת באותה גרסה כמו מקומית. אין `vercel.json` — Vercel מזהה Vite (`npm run build`, `dist/`) ואת `api/jokes.ts` (`export default { fetch }`) אוטומטית. שינויים נדחפים קודם לענף נפרד (Preview Deployment מוגן ב-Vercel Authentication), ורק אחרי אישור ממוזגים ל-`main` (Production).
+**השלכות:** אסור להוסיף ל-`api/` קבצים שאינם Endpoints. `OPENAI_API_KEY` מוגדר ב-Vercel פעמיים, עם ערך שונה ל-Preview ול-Production; שינוי ערך מחייב Redeploy.

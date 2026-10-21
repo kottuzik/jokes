@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { APIConnectionTimeoutError, APIError } from 'openai'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import handler from './jokes.ts'
+import handler from '../../api/jokes.ts'
 
 const { mockCreate } = vi.hoisted(() => ({ mockCreate: vi.fn() }))
 
