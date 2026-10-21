@@ -65,7 +65,7 @@ OpenAI Responses API — model: gpt-5
 
 **Frontend**
 - **Joke Form:** תיבת נושא אופציונלית וכפתור יצירה; הטקסט נשאר לאחר יצירה. בזמן בקשה הכפתור מושבת ומוצגים Spinner והטקסט `מכינים לך בדיחה...`.
-- **Jokes List / Joke Item:** הוספת בדיחות בסוף הרשימה; טקסט הבדיחה וכפתורי `העתקה`, `שיתוף` (אם נתמך) ומחיקה.
+- **Jokes List / Joke Item:** הוספת בדיחות בראש הרשימה (החדשה ראשונה); טקסט הבדיחה וכפתורי `העתקה`, `שיתוף` (אם נתמך) ומחיקה.
 - **Joke State:** מצב בזיכרון בלבד. רשימה, טקסט נושא, מצב טעינה, הודעת שגיאה, פרטי הבקשה האחרונה שנכשלה ואישור מחיקה. אין `localStorage`, `sessionStorage`, IndexedDB או Persisted State עבור הבדיחות.
 - **Joke API Client:** קריאת `fetch` אל `/api/jokes`, ניהול הצלחה/שגיאה וביטול בקשה בעת Unmount במידת הצורך.
 - **Connectivity UI:** זיהוי `navigator.onLine` ואירועי `online/offline` לצורך משוב; שגיאת רשת בפועל היא הסמכות הסופית משום ש-`navigator.onLine` אינו מבטיח גישה לשרת.
@@ -263,3 +263,9 @@ OpenAI Responses API — model: gpt-5
 **הקשר:** נדרש Dialog אישור נגיש עם Focus Trap, Esc והחזרת Focus, בלי להוסיף ספריות.
 **החלטה:** שימוש באלמנט `<dialog>` של הדפדפן עם `showModal()`, שמספק חסימת שאר הדף, השארת ה-Focus בתוכו ו-Esc כביטול. Focus ראשוני על "ביטול"; אחרי ביטול ה-Focus חוזר לכפתור שפתח, ואחרי מחיקה הוא עובר לכותרת "רשימת בדיחות". ב-jsdom אין `showModal`, ולכן `src/test/setup.ts` מוסיף תחליף מינימלי לבדיקות.
 **השלכות:** אין תלות חדשה; ההתנהגות נשענת על תמיכת הדפדפנים העדכניים (Chrome, Safari, Firefox, Edge) ב-`<dialog>`.
+
+### ADR-9: `vite-plugin-pwa` עם אייקונים שנוצרים ב-Build, ו-`/api/jokes` גם ב-`npm run preview`
+**הקשר:** Service Worker אמיתי פועל רק על גרסת Build, אבל `npm run preview` הגיש את הממשק בלבד, בלי `/api/jokes` (ADR-5 חל רק על `npm run dev`). בנוסף נדרשים אייקוני התקנה בכמה גדלים, ואין להם עיצוב נפרד ב-spec.
+**החלטה:** ה-Plugin המקומי (`localApi` ב-`vite.config.ts`) מחבר את אותו Handler גם ל-`configurePreviewServer`; שם Node מריץ את `api/jokes.ts` ישירות (Type Stripping, Node 24). אייקוני ה-PWA (64/192/512, maskable, apple-touch-icon, favicon.ico) נוצרים בזמן Build מ-`public/favicon.svg` דרך `pwaAssets` (`@vite-pwa/assets-generator`, Preset `minimal-2023`) ולא נשמרים ב-Git. ה-Service Worker (`generateSW`, `autoUpdate`) עושה Precache לקובצי הממשק בלבד, בלי `runtimeCaching`, עם `navigateFallbackDenylist: [/^\/api\//]`. בזמן `npm run dev` ה-SW כבוי.
+**השלכות:** `npm run build && npm run preview` (http://localhost:4173) מריץ את האפליקציה המלאה כולל PWA ו-Offline, בלי חשבון Vercel. שינוי בציור ה-favicon משנה גם את אייקון האפליקציה המותקנת. גרסה חדשה נטענת אוטומטית בביקור הבא, בלי הודעה.
+

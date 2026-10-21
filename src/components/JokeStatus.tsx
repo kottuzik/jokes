@@ -3,13 +3,14 @@ import styles from './JokeStatus.module.css'
 
 interface JokeStatusProps {
   isLoading: boolean
+  isOffline: boolean
   hasError: boolean
   announcement: Announcement | null
   onRetry: () => void
 }
 
 // Always rendered so screen readers announce changes inside the live region
-export default function JokeStatus({ isLoading, hasError, announcement, onRetry }: JokeStatusProps) {
+export default function JokeStatus({ isLoading, isOffline, hasError, announcement, onRetry }: JokeStatusProps) {
   return (
     <div className={styles.status} role="status" aria-live="polite">
       {isLoading && (
@@ -19,7 +20,18 @@ export default function JokeStatus({ isLoading, hasError, announcement, onRetry 
         </p>
       )}
 
-      {!isLoading && hasError && (
+      {!isLoading && isOffline && (
+        <p className={styles.offline}>
+          <svg className={styles.offlineIcon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 11v6M12 7.5v.5" />
+          </svg>
+          אין חיבור לאינטרנט. כדי ליצור בדיחה יש להתחבר לרשת.
+        </p>
+      )}
+
+      {/* Retry is hidden while offline; the failed request is kept and offered again once back online */}
+      {!isLoading && !isOffline && hasError && (
         <div className={styles.error}>
           <p className={styles.errorText}>
             <svg className={styles.errorIcon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">

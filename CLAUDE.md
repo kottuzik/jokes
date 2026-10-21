@@ -58,4 +58,5 @@
 ## פקודות הרצה
 > Claude ממלא זאת ברגע שהאפליקציה יכולה לרוץ (בדרך כלל בסיום Milestone 1), ומעדכן אם משהו משתנה.
 - **הרצה (dev):** `npm run dev` (ואז לפתוח http://localhost:5173)
+- **הרצת גרסת Build עם PWA/Offline:** `npm run build && npm run preview` (ואז לפתוח http://localhost:4173)
 - **בדיקות (test):** `npm test` (וגם `npm run build` לבדיקת Build ו-TypeScript)

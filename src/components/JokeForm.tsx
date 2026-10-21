@@ -5,14 +5,15 @@ interface JokeFormProps {
   topic: string
   onTopicChange: (topic: string) => void
   onSubmit: () => void
-  isLoading: boolean
+  // True while a request is running or when offline
+  disabled: boolean
 }
 
-export default function JokeForm({ topic, onTopicChange, onSubmit, isLoading }: JokeFormProps) {
+export default function JokeForm({ topic, onTopicChange, onSubmit, disabled }: JokeFormProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     // Enter in the field also submits, so guard against double requests here too
-    if (!isLoading) onSubmit()
+    if (!disabled) onSubmit()
   }
 
   return (
@@ -31,7 +32,7 @@ export default function JokeForm({ topic, onTopicChange, onSubmit, isLoading }: 
           value={topic}
           onChange={(event) => onTopicChange(event.target.value)}
         />
-        <button className={styles.button} type="submit" disabled={isLoading}>
+        <button className={styles.button} type="submit" disabled={disabled}>
           <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M10 3l1.9 5.1L17 10l-5.1 1.9L10 17l-1.9-5.1L3 10l5.1-1.9z" />
             <path d="M18 3l.8 2.2L21 6l-2.2.8L18 9l-.8-2.2L15 6l2.2-.8z" />

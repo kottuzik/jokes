@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.tsx'
 
 const JOKES = ['בדיחה ראשונה.', 'בדיחה שנייה.', 'בדיחה שלישית.']
+// Created in JOKES order; the newest is shown first
+const SHOWN = [...JOKES].reverse()
 
 const fetchMock = vi.fn<typeof fetch>()
 const writeText = vi.fn<(text: string) => Promise<void>>()
@@ -146,7 +148,7 @@ describe('Delete one joke', () => {
     await user.click(within(dialog).getByRole('button', { name: 'ביטול' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(shownJokes()).toEqual(JOKES)
+    expect(shownJokes()).toEqual(SHOWN)
     expect(trash).toHaveFocus()
   })
 
@@ -157,7 +159,7 @@ describe('Delete one joke', () => {
     await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'מחק' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(shownJokes()).toEqual([JOKES[0], JOKES[2]])
+    expect(shownJokes()).toEqual([JOKES[2], JOKES[0]])
     expect(screen.getByRole('heading', { name: 'רשימת בדיחות' })).toHaveFocus()
     expect(screen.getByRole('status')).toHaveTextContent('הבדיחה נמחקה')
   })
@@ -170,7 +172,7 @@ describe('Delete one joke', () => {
     fireEvent(screen.getByRole('dialog'), new Event('cancel', { cancelable: true }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(shownJokes()).toEqual(JOKES)
+    expect(shownJokes()).toEqual(SHOWN)
   })
 
   it('no longer sends a deleted joke as context', async () => {
@@ -202,7 +204,7 @@ describe('Clear all jokes', () => {
     expect(dialog).toHaveAccessibleDescription('כל הבדיחות ברשימה יימחקו.')
     await user.click(within(dialog).getByRole('button', { name: 'ביטול' }))
 
-    expect(shownJokes()).toEqual(JOKES)
+    expect(shownJokes()).toEqual(SHOWN)
     expect(clear).toHaveFocus()
   })
 

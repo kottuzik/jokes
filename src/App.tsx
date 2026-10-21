@@ -6,6 +6,7 @@ import Illustration from './components/Illustration.tsx'
 import JokeForm from './components/JokeForm.tsx'
 import JokeList from './components/JokeList.tsx'
 import JokeStatus from './components/JokeStatus.tsx'
+import { useOnlineStatus } from './hooks/useOnlineStatus.ts'
 import type { Announcement, Joke, JokeRequest } from './types/joke.ts'
 import styles from './App.module.css'
 
@@ -13,10 +14,11 @@ import styles from './App.module.css'
 const MAX_PREVIOUS_JOKES = 10
 const MAX_PREVIOUS_CHARS = 2000
 
+// The list is newest first; the result is oldest first, as sent before
 function recentJokes(jokes: Joke[]): string[] {
   const picked: string[] = []
   let total = 0
-  for (let i = jokes.length - 1; i >= 0 && picked.length < MAX_PREVIOUS_JOKES; i--) {
+  for (let i = 0; i < jokes.length && picked.length < MAX_PREVIOUS_JOKES; i++) {
     const text = jokes[i].text
     if (total + text.length > MAX_PREVIOUS_CHARS) break
     picked.unshift(text)
@@ -37,6 +39,7 @@ export default function App() {
   const deleteTrigger = useRef<HTMLElement | null>(null)
   const focusAfterClose = useRef<'trigger' | 'heading' | null>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const isOnline = useOnlineStatus()
 
   // Runs after the dialog has closed (child effects run first), so focus is not taken back
   useEffect(() => {
@@ -53,13 +56,14 @@ export default function App() {
   }
 
   async function send(request: JokeRequest) {
-    if (isLoading) return
+    // No AI request is sent without a network
+    if (isLoading || !isOnline) return
     setIsLoading(true)
     setFailedRequest(null)
     setAnnouncement(null)
     try {
       const { joke, language } = await generateJoke(request)
-      setJokes((current) => [...current, { id: crypto.randomUUID(), text: joke, language }])
+      setJokes((current) => [{ id: crypto.randomUUID(), text: joke, language }, ...current])
       announce('נוספה בדיחה חדשה')
     } catch {
       // Keep the exact snapshot so "נסו שוב" resends it even if the field changed meanwhile
@@ -114,9 +118,10 @@ export default function App() {
       <Header />
       <main className={styles.main}>
         <Illustration />
-        <JokeForm topic={topic} onTopicChange={setTopic} onSubmit={handleCreate} isLoading={isLoading} />
+        <JokeForm topic={topic} onTopicChange={setTopic} onSubmit={handleCreate} disabled={isLoading || !isOnline} />
         <JokeStatus
           isLoading={isLoading}
+          isOffline={!isOnline}
           hasError={failedRequest !== null}
           announcement={announcement}
           onRetry={handleRetry}

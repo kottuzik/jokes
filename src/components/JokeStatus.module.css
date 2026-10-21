@@ -66,6 +66,28 @@
   stroke-linecap: round;
 }
 
+.offline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  /* The wording carries the meaning; the colored edge is extra */
+  border: 2px solid var(--color-info);
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+}
+
+.offlineIcon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--color-info);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
 .retry {
   min-height: 44px;
   padding-inline: 20px;

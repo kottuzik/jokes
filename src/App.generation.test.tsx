@@ -76,8 +76,11 @@ describe('Joke generation', () => {
     expect(sentBody(0)).toEqual({ topic: 'cats', previousJokes: [] })
   })
 
-  it('adds each new joke to the end, keeps the topic, and sends earlier jokes as context', async () => {
-    fetchMock.mockResolvedValueOnce(okResponse('ראשונה.')).mockResolvedValueOnce(okResponse('שנייה.'))
+  it('adds each new joke at the top, keeps the topic, and sends earlier jokes as context', async () => {
+    fetchMock
+      .mockResolvedValueOnce(okResponse('ראשונה.'))
+      .mockResolvedValueOnce(okResponse('שנייה.'))
+      .mockResolvedValueOnce(okResponse('שלישית.'))
     const { user, input, button, list } = setup()
 
     await user.type(input, 'חתולים')
@@ -87,9 +90,15 @@ describe('Joke generation', () => {
     await within(list).findByText('שנייה.')
 
     const items = within(list).getAllByRole('listitem')
-    expect(items.map((item) => item.querySelector('p')?.textContent)).toEqual(['ראשונה.', 'שנייה.'])
+    // The newest joke is shown first
+    expect(items.map((item) => item.querySelector('p')?.textContent)).toEqual(['שנייה.', 'ראשונה.'])
     expect(input).toHaveValue('חתולים')
     expect(sentBody(1)).toEqual({ topic: 'חתולים', previousJokes: ['ראשונה.'] })
+
+    await user.click(button)
+    await within(list).findByText('שלישית.')
+    // Context is still sent oldest first
+    expect(sentBody(2).previousJokes).toEqual(['ראשונה.', 'שנייה.'])
   })
 
   it('sends an empty topic when the field is empty', async () => {
