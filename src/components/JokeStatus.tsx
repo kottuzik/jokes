@@ -1,9 +1,10 @@
+import type { Announcement } from '../types/joke.ts'
 import styles from './JokeStatus.module.css'
 
 interface JokeStatusProps {
   isLoading: boolean
   hasError: boolean
-  announcement: string
+  announcement: Announcement | null
   onRetry: () => void
 }
 
@@ -33,7 +34,11 @@ export default function JokeStatus({ isLoading, hasError, announcement, onRetry 
         </div>
       )}
 
-      {!isLoading && !hasError && announcement && <span className={styles.visuallyHidden}>{announcement}</span>}
+      {!isLoading && announcement && (
+        <span key={announcement.id} className={styles.visuallyHidden}>
+          {announcement.text}
+        </span>
+      )}
     </div>
   )
 }

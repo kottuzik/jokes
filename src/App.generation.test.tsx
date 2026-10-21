@@ -87,7 +87,7 @@ describe('Joke generation', () => {
     await within(list).findByText('שנייה.')
 
     const items = within(list).getAllByRole('listitem')
-    expect(items.map((item) => item.textContent)).toEqual(['ראשונה.', 'שנייה.'])
+    expect(items.map((item) => item.querySelector('p')?.textContent)).toEqual(['ראשונה.', 'שנייה.'])
     expect(input).toHaveValue('חתולים')
     expect(sentBody(1)).toEqual({ topic: 'חתולים', previousJokes: ['ראשונה.'] })
   })

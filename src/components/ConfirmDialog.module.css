@@ -1,0 +1,71 @@
+.dialog {
+  width: min(100% - 32px, 400px);
+  padding: 24px 20px 20px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 20px 48px rgb(17 24 39 / 0.2);
+  text-align: center;
+}
+
+.dialog::backdrop {
+  background: rgb(17 24 39 / 0.45);
+}
+
+.title {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 700;
+}
+
+.description {
+  margin-block-start: 6px;
+  color: var(--color-text-secondary);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-block-start: 20px;
+}
+
+.confirm,
+.cancel {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding-inline: 16px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm {
+  border: 0;
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+.confirm:hover {
+  background: #b91c1c;
+}
+
+.cancel {
+  border: 1px solid #8c929c;
+  background: var(--color-surface);
+}
+
+.cancel:hover {
+  background: var(--color-bg);
+}
+
+.icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}

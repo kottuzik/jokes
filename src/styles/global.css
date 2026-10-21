@@ -14,6 +14,8 @@
   --color-success: #10b981;
   --color-error: #ef4444;
   --color-info: #3b82f6;
+  /* Darker than Error so white text on it meets WCAG 4.5:1 (ADR-7) */
+  --color-danger: #dc2626;
 
   /* Typography */
   --font-family: 'Heebo Variable', 'Heebo', system-ui, sans-serif;
